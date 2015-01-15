@@ -9,15 +9,18 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.GridView;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class PhotoGalleryFragment extends Fragment {
 
     private static final String TAG = "PhotoGalleryFragment";
 
-    GridView mGridView;
+    private GridView mGridView;
+    private ArrayList<GalleryItem> mItems;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -33,14 +36,15 @@ public class PhotoGalleryFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_photo_gallery, container, false);
 
         mGridView = (GridView) v.findViewById(R.id.gridView);
+        setupAdapter();
 
         return v;
     }
 
-    private class FetchItemsTask extends AsyncTask<Void, Void, Void> {
+    private class FetchItemsTask extends AsyncTask<Void, Void, ArrayList<GalleryItem>> {
 
         @Override
-        protected Void doInBackground(Void... params) {
+        protected ArrayList<GalleryItem> doInBackground(Void... params) {
 //            try {
 //                String result = new FlickrFetchr().getUrl("https://www.google.com");
 //                Log.i(TAG, "Fetch contents of URL: " + result);
@@ -48,9 +52,28 @@ public class PhotoGalleryFragment extends Fragment {
 //                Log.e(TAG, "Failed to fetch URL: ", e);
 //                e.printStackTrace();
 //            }
-            new FlickrFetchr().fetchItems();
+//            new FlickrFetchr().fetchItems();
+//
+//            return null;
 
-            return null;
+            return new FlickrFetchr().fetchItems();
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<GalleryItem> items) {
+            mItems = items;
+            setupAdapter();
+        }
+    }
+
+    private void setupAdapter() {
+        if ((getActivity() != null) && (mGridView != null)) {
+            if (mItems != null) {
+                mGridView.setAdapter(new ArrayAdapter<GalleryItem>(
+                        getActivity(), android.R.layout.simple_gallery_item, mItems));
+            } else {
+                mGridView.setAdapter(null);
+            }
         }
     }
 }
