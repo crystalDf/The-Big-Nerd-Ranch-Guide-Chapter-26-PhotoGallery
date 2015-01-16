@@ -27,6 +27,7 @@ public class FlickrFetchr {
     private static final String METHOD_GET_RECENT = "flickr.photos.getRecent";
     private static final String PARAM_EXTRAS = "extras";
     private static final String EXTRA_SMALL_URL = "url_s";
+    private static final String PAGE = "page";
 
     private static final String XML_PHOTO = "photo";
 
@@ -64,7 +65,7 @@ public class FlickrFetchr {
     }
 
 //    public void fetchItems() {
-    public ArrayList<GalleryItem> fetchItems() {
+    public ArrayList<GalleryItem> fetchItems(int page) {
 
         ArrayList<GalleryItem> items = new ArrayList<>();
 
@@ -73,6 +74,7 @@ public class FlickrFetchr {
                     .appendQueryParameter("method", METHOD_GET_RECENT)
                     .appendQueryParameter("api_key", API_KEY)
                     .appendQueryParameter(PARAM_EXTRAS, EXTRA_SMALL_URL)
+                    .appendQueryParameter(PAGE, (page + ""))
                     .build().toString();
 
             String xmlString = getUrl(url);
